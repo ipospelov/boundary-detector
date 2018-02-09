@@ -5,12 +5,14 @@
 
 #define PI 3.14
 #define SIGMA 0.5
+#define W1 0.9
+#define W2 -0.9
 
 using namespace cv;
 using namespace std;
 
 int main() {
-    Mat img = imread( "/home/posiv/НГУ/BoundaryDetector/1.jpg", CV_LOAD_IMAGE_COLOR); // Открытие файла
+    Mat img = imread( "/home/posiv/НГУ/BoundaryDetector/pictures/1.jpg", CV_LOAD_IMAGE_COLOR); // Открытие файла
 
     if(! img.data )                              // Check for invalid input
     {
@@ -57,14 +59,35 @@ int main() {
 
     Mat Cr;
     red.copyTo(Cr);
+    GaussianBlur(Cr, Cr, Size(3,3), SIGMA, SIGMA);
 
-    for(int i=0; i<Cr.rows; i++)
+    Mat Cg;
+    green.copyTo(Cg);
+    GaussianBlur(Cg, Cg, Size(3,3), SIGMA, SIGMA);
+
+    Mat Cb;
+    blue.copyTo(Cb);
+    GaussianBlur(Cb, Cb, Size(3,3), SIGMA, SIGMA);
+
+    Mat Cy;
+    yellow.copyTo(Cy);
+    GaussianBlur(Cy, Cy, Size(3,3), SIGMA, SIGMA);
+
+    /*for(int i=0; i<Cr.rows; i++)
         for(int j=0; j<Cr.cols; j++) {
             Cr.at<cv::Vec3b>(i, j) *= exp(- (pow(i, 2) + pow(j, 2) / (2 * pow(SIGMA, 2)))) / (2 * PI * pow(SIGMA, 2));
             cout<< exp(- (pow(i, 2) + pow(j, 2) / (2 * pow(SIGMA, 2)))) / (2 * PI * pow(SIGMA, 2)) << endl;
-        }
+        }*/
 
-    imshow( "Display window3", Cr);                   // Show our image inside it.
+    Mat Srg = W1 * Cr + W2 * Cg;
+    Mat Sgr = W1 * Cg + W2 * Cr;
+    Mat Sby = W1 * Cb + W2 * Cy;
+    Mat Syb = W1 * Cy + W2 * Cb;
+
+    /*_____________________*/
+    /*Cortex Layer*/
+
+    imshow( "Display window3", Sgr);                   // Show our image inside it.
     waitKey(0);
 
 
