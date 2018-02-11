@@ -95,3 +95,17 @@ int main() {
     return 0;
 
 }
+
+Mat getGaussianKernel(int rows, int cols, double sigmax, double sigmay, double theta, int k, double gamma){
+
+    auto gauss_x = cv::getGaussianKernel(cols, k*sigmax, CV_32F);
+    auto gauss_y = cv::getGaussianKernel(rows, k*sigmay/gamma, CV_32F);
+
+    Mat dst = gauss_x * gauss_y.t();
+
+    CvPoint2D32f center = cvPoint2D32f(dst.rows/2, dst.cols/2);
+    Mat rot_mat = getRotationMatrix2D(center, theta, 1.0);
+    warpAffine(dst, dst, rot_mat, dst.size());
+    return dst;
+
+}
