@@ -13,7 +13,7 @@ using namespace cv;
 using namespace std;
 
 int main() {
-    Mat img = imread( "/home/posiv/НГУ/BoundaryDetector/pictures/1.jpg", CV_LOAD_IMAGE_COLOR); // Открытие файла
+    Mat img = imread( "../pictures/1.jpg", CV_LOAD_IMAGE_COLOR); // Открытие файла
 
     if(! img.data )                              // Check for invalid input
     {
@@ -90,11 +90,11 @@ int main() {
     //imshow( "Display window3", Sgr);                   // Show our image inside it.
     //waitKey(0);
 
-    CortexLayer CL(0, 1, 0.5, Size(3,3), 1);
+    CortexLayer CL(0, 0.1, 0.5, Size(5,5), 2);
     CL.printKernel();
 
-    Mat kernelX = getGaussianKernel(3, SIGMA);
-    Mat kernelY = getGaussianKernel(3, SIGMA);
+    Mat kernelX = getGaussianKernel(5, SIGMA);
+    Mat kernelY = getGaussianKernel(5, SIGMA);
     Mat kernelXY = kernelX * kernelY.t();
 
     //Mat kernel = get2DGaussianKernel(3, SIGMA, CV_32FC1);

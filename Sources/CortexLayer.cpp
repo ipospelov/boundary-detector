@@ -27,11 +27,11 @@ void CortexLayer::getGaussianKernel() {
 
     const auto denominator = 8 * std::atan(1) * k*sigma * k*sigma;
 
-    std::vector<double> gauss_x, gauss_y;
+    //std::vector<double> gauss_x, gauss_y;
 
-    std::vector<std::vector<int> > gauss(
+    std::vector<std::vector<double> > gauss(
             size.width,
-            std::vector<int>(size.height));
+            std::vector<double>(size.height));
 
 
     //gauss_x.reserve(size.height);
