@@ -3,6 +3,7 @@
 #include <opencv2/opencv.hpp>
 #include "ExtendedMat.h"
 #include "CortexLayer.h"
+#include "ConeLayer.h"
 
 #define PI 3.14
 #define SIGMA 0.5
@@ -37,8 +38,11 @@ int main() {
 
     /*Cone layer*/
 
-    Mat red;
-    splitedImg[2].copyTo(red);
+    ConeLayer coneLayer(img);
+
+    Mat red = coneLayer.get_red_image();
+    //splitedImg[2].copyTo(red);
+
 
     Mat green;
     splitedImg[1].copyTo(green);
