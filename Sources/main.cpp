@@ -2,6 +2,7 @@
 #include <math.h>
 #include <opencv2/opencv.hpp>
 #include "ExtendedMat.h"
+#include "CortexLayer.h"
 
 #define PI 3.14
 #define SIGMA 0.5
@@ -60,7 +61,6 @@ int main() {
     Mat Cr;
     red.copyTo(Cr);
     GaussianBlur(Cr, Cr, Size(3,3), SIGMA, SIGMA);
-
     Mat Cg;
     green.copyTo(Cg);
     GaussianBlur(Cg, Cg, Size(3,3), SIGMA, SIGMA);
@@ -87,10 +87,18 @@ int main() {
     /*_____________________*/
     /*Cortex Layer*/
 
-    imshow( "Display window3", Sgr);                   // Show our image inside it.
-    waitKey(0);
+    //imshow( "Display window3", Sgr);                   // Show our image inside it.
+    //waitKey(0);
 
+    CortexLayer CL(0, 1, 0.5, Size(3,3), 1);
+    CL.printKernel();
 
+    Mat kernelX = getGaussianKernel(3, SIGMA);
+    Mat kernelY = getGaussianKernel(3, SIGMA);
+    Mat kernelXY = kernelX * kernelY.t();
+
+    //Mat kernel = get2DGaussianKernel(3, SIGMA, CV_32FC1);
+    std::cout << "kernel = "<< std::endl << " "  << kernelXY << std::endl << std::endl;
 
     return 0;
 
