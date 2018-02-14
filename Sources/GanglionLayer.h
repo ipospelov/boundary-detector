@@ -15,13 +15,31 @@ private:
     Mat green;
     Mat blue;
     Mat yellow;
+
+    Mat Cr;
+    Mat Cg;
+    Mat Cb;
+    Mat Cy;
+
+    void initBluredImages();
+
+
 public:
-    GanglionLayer(float w1, float w2, float sigma, Mat red, Mat green, Mat blue, Mat yellow);
 
     GanglionLayer(float w1, float w2, float sigma, const Mat &red, const Mat &green, const Mat &blue,
                   const Mat &yellow);
 
-    Mat getSRG();
+    void reInitImages(const Mat &red, const Mat &green, const Mat &blue, const Mat &yellow);
+
+    MatExpr getSRG();
+
+    MatExpr getSGR();
+
+    MatExpr getSBY();
+
+    MatExpr getSYB();
+
+
 
 };
 

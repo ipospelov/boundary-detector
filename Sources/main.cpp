@@ -4,6 +4,7 @@
 #include "ExtendedMat.h"
 #include "CortexLayer.h"
 #include "ConeLayer.h"
+#include "GanglionLayer.h"
 
 #define PI 3.14
 #define SIGMA 0.5
@@ -43,14 +44,14 @@ int main() {
     Mat red = coneLayer.get_red_image();
     //splitedImg[2].copyTo(red);
 
+    Mat green = coneLayer.get_green_image();
+    //splitedImg[1].copyTo(green);
 
-    Mat green;
-    splitedImg[1].copyTo(green);
+    Mat blue = coneLayer.get_blue_image();
+    //splitedImg[0].copyTo(blue);
 
-    Mat blue;
-    splitedImg[0].copyTo(blue);
-
-    Mat yellow = splitedImg[1] * 0.5 + splitedImg[2] * 0.5;
+    Mat yellow = coneLayer.get_yellow_image();
+    //splitedImg[1] * 0.5 + splitedImg[2] * 0.5;
 
 
     /*//namedWindow( "Display window", WINDOW_AUTOSIZE );// Create a window for display.
@@ -62,7 +63,9 @@ int main() {
     /* ________________________________*/
     /*LGN layer*/
 
-    Mat Cr;
+    GanglionLayer ganglionLayer(W1, W2, SIGMA, red, green, blue, yellow);
+
+    /*Mat Cr;
     red.copyTo(Cr);
     GaussianBlur(Cr, Cr, Size(3,3), SIGMA, SIGMA);
     Mat Cg;
@@ -75,7 +78,7 @@ int main() {
 
     Mat Cy;
     yellow.copyTo(Cy);
-    GaussianBlur(Cy, Cy, Size(3,3), SIGMA, SIGMA);
+    GaussianBlur(Cy, Cy, Size(3,3), SIGMA, SIGMA);*/
 
     /*for(int i=0; i<Cr.rows; i++)
         for(int j=0; j<Cr.cols; j++) {
@@ -83,10 +86,13 @@ int main() {
             cout<< exp(- (pow(i, 2) + pow(j, 2) / (2 * pow(SIGMA, 2)))) / (2 * PI * pow(SIGMA, 2)) << endl;
         }*/
 
-    Mat Srg = W1 * Cr + W2 * Cg;
-    Mat Sgr = W1 * Cg + W2 * Cr;
-    Mat Sby = W1 * Cb + W2 * Cy;
-    Mat Syb = W1 * Cy + W2 * Cb;
+    Mat Srg = ganglionLayer.getSRG();//W1 * Cr + W2 * Cg;
+    Mat Sgr = ganglionLayer.getSGR();//W1 * Cg + W2 * Cr;
+    Mat Sby = ganglionLayer.getSBY();//W1 * Cb + W2 * Cy;
+    Mat Syb = ganglionLayer.getSYB();//W1 * Cy + W2 * Cb;
+
+    imshow( "Display window3", Syb);                   // Show our image inside it.
+    waitKey(0);
 
     /*_____________________*/
     /*Cortex Layer*/
