@@ -11,17 +11,19 @@ using namespace cv;
 class CortexLayer {
 
 private:
-    double theta;
+    int n;
     double gamma;
     double sigma;
     Size size;
     int k;
     Mat gaussianKernel;
+    std::vector<Mat> filters;
 
-    void getGaussianKernel();
+    Mat getGaussianKernel(double theta);
+    Mat& getDrg();
 
 public:
-    CortexLayer(double theta, double gamma, double sigma, const Size &size, int k);
+    CortexLayer(double theta, int n, double sigma, const Size &size, int k);
     void printKernel();
 
 };

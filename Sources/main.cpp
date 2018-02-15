@@ -114,6 +114,7 @@ int main() {
 
 }
 
+/*
 Mat getGaussianKernel(int rows, int cols, double sigmax, double sigmay, double theta, int k, double gamma){
 
     auto gauss_x = cv::getGaussianKernel(cols, k*sigmax, CV_32F);
@@ -126,4 +127,4 @@ Mat getGaussianKernel(int rows, int cols, double sigmax, double sigmay, double t
     warpAffine(dst, dst, rot_mat, dst.size());
     return dst;
 
-}
+}*/

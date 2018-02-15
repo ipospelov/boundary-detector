@@ -3,19 +3,26 @@
 //
 
 #include "CortexLayer.h"
+#define PI 3.14
 
-CortexLayer::CortexLayer(double theta, double gamma, double sigma, const Size &size, int k) : theta(theta),
+CortexLayer::CortexLayer(double theta, int n, double sigma, const Size &size, int k) : n(n),
                                                                                               gamma(gamma),
                                                                                               sigma(sigma), size(size),
                                                                                               k(k) {
-    getGaussianKernel();
+    for(auto i = 1; i <= n; i++){
+        filters.push_back(getGaussianKernel((i - 1)*PI*2/n));
+    }
 }
 
 void CortexLayer::printKernel() {
     std::cout << "kernel = "<< std::endl << " "  << gaussianKernel << std::endl << std::endl;
 }
 
-void CortexLayer::getGaussianKernel() {
+Mat& CortexLayer::getDrg() {
+    
+}
+
+Mat CortexLayer::getGaussianKernel(double theta) {
 
     gaussianKernel = Mat::zeros(size.height, size.width, CV_32FC1);
 
@@ -59,4 +66,8 @@ void CortexLayer::getGaussianKernel() {
             gaussianKernel.at<float>(j, i) = gauss[i][j] / denominator;
         }
     }
+
+    return gaussianKernel;
 }
+
+
