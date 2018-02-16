@@ -20,11 +20,13 @@ private:
     std::vector<Mat> filters;
 
     Mat getGaussianKernel(double theta);
-    Mat& getDrg();
+    Mat& getMax(Mat src);
 
 public:
     CortexLayer(double theta, int n, double sigma, const Size &size, int k);
     void printKernel();
+    Mat& getDrg(Mat& srg);
+
 
 };
 

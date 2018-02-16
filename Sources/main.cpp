@@ -10,6 +10,7 @@
 #define SIGMA 0.5
 #define W1 0.9
 #define W2 -0.9
+#define N0 16
 
 using namespace cv;
 using namespace std;
@@ -100,8 +101,8 @@ int main() {
     //imshow( "Display window3", Sgr);                   // Show our image inside it.
     //waitKey(0);
 
-    CortexLayer CL(0, 0.1, 0.5, Size(5,5), 2);
-    CL.printKernel();
+    CortexLayer cortexLayer(0, 0.1, 0.5, Size(5,5), 2);
+    cortexLayer.printKernel();
 
     Mat kernelX = getGaussianKernel(5, SIGMA);
     Mat kernelY = getGaussianKernel(5, SIGMA);
