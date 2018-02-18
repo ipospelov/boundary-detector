@@ -11,21 +11,26 @@ using namespace cv;
 class CortexLayer {
 
 private:
-    int n;
+    unsigned long n;
     double gamma;
     double sigma;
     Size size;
     int k;
-    Mat gaussianKernel;
     std::vector<Mat> filters;
 
     Mat getGaussianKernel(double theta);
-    Mat& getMax(Mat src);
+    Mat getMax(Mat src);
 
 public:
-    CortexLayer(double theta, int n, double sigma, const Size &size, int k);
-    void printKernel();
-    Mat& getDrg(Mat& srg);
+    CortexLayer(double theta, unsigned long n, double sigma, const Size &size, int k);
+    void printKernel(int index);
+    Mat getDrg(Mat srg);
+    Mat getDgr(Mat sgr);
+    Mat getDby(Mat sby);
+    Mat getDyb(Mat syb);
+
+
+
 
 
 };

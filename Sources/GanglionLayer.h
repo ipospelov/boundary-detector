@@ -26,7 +26,7 @@ private:
 
 public:
 
-    GanglionLayer(float w1, float w2, float sigma, const Mat &red, const Mat &green, const Mat &blue,
+    GanglionLayer(float w1, double w2, float sigma, const Mat &red, const Mat &green, const Mat &blue,
                   const Mat &yellow);
 
     void reInitImages(const Mat &red, const Mat &green, const Mat &blue, const Mat &yellow);
