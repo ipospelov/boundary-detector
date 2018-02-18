@@ -21,18 +21,30 @@ void CortexLayer::printKernel() {
 Mat& CortexLayer::getDrg(Mat& srg) {
 
     //Mat[n] arr
+    return getMax(srg);
     
 }
 
-Mat &CortexLayer::getMax(Mat src) {
+Mat& CortexLayer::getMax(Mat src) {
 
-    Mat arr[n];
+//    printf("yey");
+//    fflush(stdout);
+    //Mat arr[n];
+    std::vector<Mat> arr(n);
+    Mat max;
+
 
     for(auto i = 0; i < n; i++){
         cv::filter2D(src, arr[i],src.depth(), filters[i]);
     }
 
-    //TODO: максимум из массива
+    arr[0].copyTo(max);
+
+    for(auto i = 1; i < n; i++){
+        cv::max(arr[i], max, max);
+    }
+
+    return max;
 
 }
 

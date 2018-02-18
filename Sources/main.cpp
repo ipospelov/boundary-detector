@@ -11,6 +11,7 @@
 #define W1 0.9
 #define W2 -0.9
 #define N0 16
+#define GAMMA 0.5
 
 using namespace cv;
 using namespace std;
@@ -24,8 +25,8 @@ int main() {
         return -1;
     }
 
-    vector<Mat> splitedImg = vector<Mat>();
-    split(img, splitedImg);
+//    vector<Mat> splitedImg = vector<Mat>();
+//    split(img, splitedImg);
 
 /*
     ExtendedMat red = ExtendedMat(img.rows, img.cols, img.type());
@@ -92,8 +93,8 @@ int main() {
     Mat Sby = ganglionLayer.getSBY();//W1 * Cb + W2 * Cy;
     Mat Syb = ganglionLayer.getSYB();//W1 * Cy + W2 * Cb;
 
-    imshow( "Display window3", Syb);                   // Show our image inside it.
-    waitKey(0);
+//    imshow( "Display window3", Syb);                   // Show our image inside it.
+//    waitKey(0);
 
     /*_____________________*/
     /*Cortex Layer*/
@@ -101,15 +102,21 @@ int main() {
     //imshow( "Display window3", Sgr);                   // Show our image inside it.
     //waitKey(0);
 
-    CortexLayer cortexLayer(0, 0.1, 0.5, Size(5,5), 2);
-    cortexLayer.printKernel();
+    CortexLayer cortexLayer(GAMMA, N0, SIGMA, Size(5,5), 2);
+    Mat Drg = cortexLayer.getDrg(Srg);
+
+    //imshow( "Display SRG", Srg);
+    imshow( "Display DRG", Drg);                   // Show our image inside it.
+    waitKey(0);
+
+    /*cortexLayer.printKernel();
 
     Mat kernelX = getGaussianKernel(5, SIGMA);
     Mat kernelY = getGaussianKernel(5, SIGMA);
     Mat kernelXY = kernelX * kernelY.t();
 
     //Mat kernel = get2DGaussianKernel(3, SIGMA, CV_32FC1);
-    std::cout << "kernel = "<< std::endl << " "  << kernelXY << std::endl << std::endl;
+    std::cout << "kernel = "<< std::endl << " "  << kernelXY << std::endl << std::endl;*/
 
     return 0;
 
