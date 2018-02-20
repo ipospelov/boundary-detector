@@ -17,6 +17,7 @@ private:
     Size size;
     int k;
     std::vector<Mat> filters;
+    std::vector<Mat> oppositeFilters;
 
     Mat getGaussianKernel(double theta);
     Mat getMax(Mat src);

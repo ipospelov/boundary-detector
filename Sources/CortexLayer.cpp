@@ -11,9 +11,8 @@ CortexLayer::CortexLayer(double gamma, unsigned long n, double sigma, const Size
                                                                                                  sigma(sigma), size(size),
                                                                                                  k(k) {
     for(auto i = 1; i <= n; i++){
-        filters.push_back(getGaussianKernel((i - 1)*PI*2/n));
-       // printKernel(i-1);
-
+        filters.push_back(getGaussianKernel((i - 1)*PI/n));
+        oppositeFilters.push_back(getGaussianKernel((i - 1)*PI/n + PI));
     }
 }
 
@@ -32,10 +31,14 @@ Mat CortexLayer::getMax(Mat src) {
     std::vector<Mat> arr(n);
     Mat max(src.rows, src.cols, src.type());
     Mat filtered(src.rows, src.cols, src.type());
+    Mat oppositeFiltered(src.rows, src.cols, src.type());
+
 
     for(auto i = 0; i < n; i++){
         cv::filter2D(src, filtered,src.depth(), filters[i]);
-        filtered.copyTo(arr[i]);
+        cv::filter2D(src, oppositeFiltered,src.depth(), oppositeFilters[i]);
+        arr[i] = filtered; //+ oppositeFiltered;
+        //(filtered - oppositeFiltered).copyTo(arr[i]);
 
     }
 
