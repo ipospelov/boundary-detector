@@ -6,6 +6,7 @@
 #define BOUNDARYDETECTOR_CORTEXLAYER_H
 
 #include <opencv2/opencv.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 using namespace cv;
 
 class CortexLayer {
@@ -17,10 +18,10 @@ private:
     Size size;
     int k;
     std::vector<Mat> filters;
-    std::vector<Mat> oppositeFilters;
 
     Mat getGaussianKernel(double theta);
     Mat getMax(Mat src);
+    void derivateGaussianKernels();
 
 public:
     CortexLayer(double theta, unsigned long n, double sigma, const Size &size, int k);
