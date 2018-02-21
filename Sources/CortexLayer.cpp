@@ -1,7 +1,3 @@
-//
-// Created by posiv on 12.02.18.
-//
-
 #include "CortexLayer.h"
 
 #define PI 3.14
@@ -9,21 +5,21 @@
 CortexLayer::CortexLayer(double gamma, unsigned long n, double sigma, const Size &size, int k) : n(n),
                                                                                                  gamma(gamma),
                                                                                                  sigma(sigma), size(size),
-                                                                                                 k(k) {
+                                                                                                  k(k) {
+    double theta;
     for(auto i = 1; i <= n; i++){
-        filters.push_back(getGaussianKernel((i - 1)*2*PI/n));
+        theta = (i - 1)*2*PI/n;
+        filters.push_back(getGaussianKernel(theta));
+        derivativeGaussianKernel(theta, i - 1);
     }
-    derivateGaussianKernels();
 }
 
-void CortexLayer::derivateGaussianKernels() {
-    Mat temp;
-    for(auto i = 0; i < n; i++){
-        filters[i].copyTo(temp);
-        printKernel(i);
-        Sobel(temp, filters[i], temp.type(), 1, 0, 3);
-        printKernel(i);
-    }
+void CortexLayer::derivativeGaussianKernel(double theta, int index) {
+    std::cout<<  std::cos(theta) << std::endl <<  std::sin(theta) << std::endl;
+    //TODO: orientation vector 
+    Sobel(filters[index], filters[index], filters[index].type(), std::cos(theta), std::sin(theta), 3);
+    printKernel(index);
+
 }
 
 void CortexLayer::printKernel(int index) {

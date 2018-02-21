@@ -21,7 +21,7 @@ private:
 
     Mat getGaussianKernel(double theta);
     Mat getMax(Mat src);
-    void derivateGaussianKernels();
+    void derivativeGaussianKernel(double theta, int index);
 
 public:
     CortexLayer(double theta, unsigned long n, double sigma, const Size &size, int k);
