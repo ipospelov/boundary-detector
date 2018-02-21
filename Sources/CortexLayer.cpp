@@ -1,7 +1,5 @@
 #include "CortexLayer.h"
 
-#define PI 3.14
-
 CortexLayer::CortexLayer(double gamma, unsigned long n, double sigma, const Size &size, int k) : n(n),
                                                                                                  gamma(gamma),
                                                                                                  sigma(sigma), size(size),
@@ -9,21 +7,13 @@ CortexLayer::CortexLayer(double gamma, unsigned long n, double sigma, const Size
     double theta;
     for(auto i = 1; i <= n; i++){
         theta = (i - 1)*360/n;
-        filters.push_back(getGaussianKernel(theta));
+        filters.push_back(getFilterKernel(theta));
         //derivativeGaussianKernel(theta, i - 1);
     }
 }
 
-void CortexLayer::derivativeGaussianKernel(double theta, int index) {
-    //std::cout<<  std::cos(theta) << std::endl <<  std::sin(theta) << std::endl;
-    //TODO: orientation vector
-     //Sobel(filters[index], filters[index], filters[index].type(), std::cos(theta), std::sin(theta), 5);
-    printKernel(index);
-
-}
-
-void CortexLayer::printKernel(int index) {
-    std::cout << "kernel = "<< index << std::endl << " "  << filters[index] << std::endl << std::endl;
+void CortexLayer::printMat(Mat mat) {
+    std::cout << "kernel = " << std::endl << " "  << mat << std::endl << std::endl;
 }
 
 Mat CortexLayer::getDrg(Mat srg) { return getMax(std::move(srg)); }
@@ -35,18 +25,12 @@ Mat CortexLayer::getDyb(Mat syb) { return getMax(std::move(syb)); }
 Mat CortexLayer::getMax(Mat src) {
 
     std::vector<Mat> arr(n);
-    Mat max(src.rows, src.cols, src.type());
+    Mat max(src.rows, src.cols, CV_32FC1);
     src.convertTo(src, CV_32FC1);
-    Mat filtered(src.rows, src.cols, CV_32FC1);
-    Mat filtered2(src.rows, src.cols, src.type());
-    //Mat oppositeFiltered(src.rows, src.cols, src.type());
 
 
     for(auto i = 0; i < n; i++){
-        cv::filter2D(src, filtered,src.depth(), filters[i]);
-        std::cout<<filtered<<std::endl;
-        //cv::filter2D(src, filtered2,src.depth(), -1*filters[i]);
-        filtered.copyTo(arr[i]);
+        getD(i, src).copyTo(arr[i]);
 
     }
 
@@ -54,19 +38,33 @@ Mat CortexLayer::getMax(Mat src) {
 
     for(auto i = 1; i < n; i++){
         cv::max(arr[i], max, max);
-        //imshow( "Display max", max);                   // Show our image inside it.
-        //waitKey(0);
     }
 
     max.convertTo(max, CV_32FC1);
     normalize(max, max);
     return max;
 
+}
+
+Mat CortexLayer::getD(int index, Mat s) {
+
+    Mat filtered(s.rows, s.cols, CV_32FC1);
+    Mat filtered2(s.rows, s.cols, CV_32FC1);
+    cv::filter2D(s, filtered,s.depth(), filters[index]);
+
+    filtered.copyTo(filtered2);
+    threshold(filtered, filtered, 0.0, 255,THRESH_TOZERO);
+
+    filtered2 *= -1;
+    threshold(filtered2, filtered2, 0.0, 255,THRESH_TOZERO);
+    Mat rez = filtered - filtered2;
+
+    return rez;
 
 }
 
 
-Mat CortexLayer::getGaussianKernel(double theta) {
+Mat CortexLayer::getFilterKernel(double theta) {
 
     Mat gaussianKernel = Mat::zeros(size.height, size.width, CV_32FC1);
 
@@ -87,10 +85,12 @@ Mat CortexLayer::getGaussianKernel(double theta) {
         auto x = i - x_mid;
         for(auto j = 0; j < size.width; ++j){
             auto y = j - y_mid;
-            gauss[i][j] = std::exp(-pow(x*std::cos(0) + y*std::sin(0), 2) * x_spread
-                                   -pow(gamma,2) * pow(-x*std::sin(0) + y*std::cos(0), 2) * y_spread);
-            /*gauss[i][j] = std::exp(-pow(x, 2) * x_spread
-                                   - pow(y, 2) * y_spread);*/
+            gauss[i][j] = std::exp(-pow(x, 2) * x_spread
+                                   -pow(gamma,2) * pow(y, 2) * y_spread);
+
+            /*gauss[i][j] = std::exp(-pow(x*std::cos(0) + y*std::sin(0), 2) * x_spread
+                                   -pow(gamma,2) * pow(-x*std::sin(0) + y*std::cos(0), 2) * y_spread);*/
+
         }
 
     }
@@ -101,16 +101,20 @@ Mat CortexLayer::getGaussianKernel(double theta) {
             gaussianKernel.at<float>(j, i) = static_cast<float>(gauss[i][j] / denominator);
         }
     }
-    //std::cout<<  theta << std::endl;
-    Sobel(gaussianKernel, gaussianKernel, gaussianKernel.type(), std::cos(0), std::sin(0), 3);
-    Point2f src_center(gaussianKernel.cols/2.0F, gaussianKernel.rows/2.0F);
-    Mat rot_mat = getRotationMatrix2D(src_center, theta, 1.0);
-    warpAffine(gaussianKernel, gaussianKernel, rot_mat, gaussianKernel.size());
-    //std::cout << gaussianKernel << std::endl;
+
+    derivativeGaussianKernel(gaussianKernel, theta);
 
     return gaussianKernel;
 }
 
+void CortexLayer::derivativeGaussianKernel(Mat& img,double theta) {
+
+    Sobel(img, img, img.type(), 1, 0, 3);
+    Point2f src_center(img.cols/2.0F, img.rows/2.0F);
+    Mat rot_mat = getRotationMatrix2D(src_center, theta, 1.0);
+    warpAffine(img, img, rot_mat, img.size());
+
+}
 
 
 

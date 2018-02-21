@@ -5,9 +5,9 @@
 #include "GanglionLayer.h"
 
 #define PI 3.14
-#define SIGMA 1
+#define SIGMA 0.3
 #define W1 1
-#define W2 -0.9
+#define W2 (-0.6)
 #define N0 16
 #define GAMMA 0.5
 
@@ -49,13 +49,13 @@ int main() {
     Mat Sby = ganglionLayer.getSBY();//W1 * Cb + W2 * Cy;
     Mat Syb = ganglionLayer.getSYB();//W1 * Cy + W2 * Cb;
 
-    imshow( "Display Srg", Srg);                   // Show our image inside it.
-    imshow( "Display Sgr", Sgr);                   // Show our image inside it.
-    imshow( "Display Sby", Sby);                   // Show our image inside it.
-    imshow( "Display Syb", Syb);                   // Show our image inside it.
-    waitKey(0);
+//    imshow( "Display Srg", Srg);                   // Show our image inside it.
+//    imshow( "Display Sgr", Sgr);                   // Show our image inside it.
+//    imshow( "Display Sby", Sby);                   // Show our image inside it.
+//    imshow( "Display Syb", Syb);                   // Show our image inside it.
+//    waitKey(0);
 
-    CortexLayer cortexLayer(GAMMA, N0, SIGMA, Size(9,9), 2);
+    CortexLayer cortexLayer(GAMMA, N0, SIGMA, Size(7,7), 2);
 
     //TODO: DO из двух SO с противоположными ориентациями
     //f - мера, ROC кривые

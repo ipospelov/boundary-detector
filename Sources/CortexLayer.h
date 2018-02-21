@@ -19,13 +19,14 @@ private:
     int k;
     std::vector<Mat> filters;
 
-    Mat getGaussianKernel(double theta);
+    Mat getFilterKernel(double theta);
     Mat getMax(Mat src);
-    void derivativeGaussianKernel(double theta, int index);
+    void derivativeGaussianKernel(Mat& img,double theta);
+    Mat getD(int index, Mat s);
 
 public:
     CortexLayer(double theta, unsigned long n, double sigma, const Size &size, int k);
-    void printKernel(int index);
+    void printMat(Mat mat);
     Mat getDrg(Mat srg);
     Mat getDgr(Mat sgr);
     Mat getDby(Mat sby);
