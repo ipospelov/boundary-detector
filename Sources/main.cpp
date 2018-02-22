@@ -54,8 +54,8 @@ int main() {
     Mat Dyb = cortexLayer.getDyb(Syb);
 
     Mat finalResponse = perElementMax({Drg, Dgr, Dby, Dyb});
-    normalize(finalResponse, finalResponse, 255, 0);
 
+    normalize(finalResponse, finalResponse, 255, 0);
     imshow( "Display final", finalResponse);                   // Show our image inside it.
     waitKey(0);
 
