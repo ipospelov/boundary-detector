@@ -3,6 +3,7 @@
 #include "CortexLayer.h"
 #include "ConeLayer.h"
 #include "GanglionLayer.h"
+#include "SpatialSparsenessConstraint.h"
 
 #define SIGMA 0.3
 #define W1 1
@@ -52,6 +53,9 @@ int main() {
     Mat Dgr = cortexLayer.getDgr(Sgr);
     Mat Dby = cortexLayer.getDby(Sby);
     Mat Dyb = cortexLayer.getDyb(Syb);
+
+    SpatialSparsenessConstraint ssc;
+    ssc.suppressImage(Dgr);
 
     Mat finalResponse = perElementMax({Drg, Dgr, Dby, Dyb});
 
