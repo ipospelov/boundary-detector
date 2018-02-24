@@ -10,26 +10,36 @@ SpatialSparsenessConstraint::SpatialSparsenessConstraint() {}
 
 void SpatialSparsenessConstraint::suppressImage(cv::Mat& src) {
 
+    meanMats.clear();
     cv::normalize(src, src, 10, 0);
     cv::Mat mag = getGradientMagnitude(src);
-    float mu;
-
+    float mu, muCurr;
+    cv::Mat meanMat;
+    float meanValue;
 
     for(int y = 0; y < src.rows; y++){
         for(int x = 0; x < src.cols; x++){
 
-            cv::Mat meanMat;
+            if((x % size*size == 0) || (y % size*size == 0)) {
 
-            meanMat = getMeanMat(mag, x, y);
-            //std::cout <<"mean mat" << std::endl << meanMat<<std::endl;
+                /*if(meanMats.count(cv::Point(x / (size*size), y / (size*size))) != 0 ){
+                    meanMat = meanMats.find(cv::Point(x / (size*size), y / (size*size)))->second;
+                    std::cout<<meanMats.size()<<std::endl;
+                    //cv::imshow( "Display final", meanMat );                   // Show our image inside it.
+                    cv::waitKey(0);
 
-            mu = getSparsness(meanMat);
-            //std::cout <<"sparsennes" << std::endl << mu<<std::endl;
-            mu *= src.at<float>(y, x)/getMeanValue(meanMat, 0.0f, 1.5f) < 1 ? src.at<float>(y, x)/getMeanValue(meanMat, 0.0f, 1.5f) : 1;
-                    //std::min(1., src.at<float>(y, x)/getMeanValue(meanMat, 0.0f, 1.5f) );
-            //std::cout<<"mu"<<mu<<std::endl;
-            src.at<float>(y, x) *= mu;
-            //std::cout<<std::endl;
+                }else {*/
+                meanMat = getMeanMat(mag, x, y);
+                    //meanMats.insert(std::pair<cv::Point, cv::Mat>(cv::Point(x / (size*size), y / (size*size)), std::move(meanMat)));
+
+                mu = getSparsness(meanMat);
+                meanValue = getMeanValue(meanMat, 0.0f, 1.5f);
+            }
+
+            muCurr = mu;
+            muCurr *= src.at<float>(y, x)/meanValue < 1 ? src.at<float>(y, x)/meanValue : 1;
+
+            src.at<float>(y, x) *= muCurr;
 
         }
     }
@@ -46,15 +56,14 @@ cv::Mat SpatialSparsenessConstraint::getGradientMagnitude(cv::Mat src) {
     cv::Sobel(src, Sy, CV_32FC1, 0, 1, 3);
     cv::Mat mag;
     cv::magnitude(Sx, Sy, mag);
-    //getMeanMat(mag, 100,100);
     return mag;
 
 }
 
 cv::Mat SpatialSparsenessConstraint::getMeanMat(cv::Mat mag, int x, int y) {
 
-    int xstart = x / std::pow(size, 2); //start of big quad
-    int ystart = y / std::pow(size, 2);
+    int xstart = x / (size*size); //start of big quad
+    int ystart = y / (size*size);
 
     /*int xshift = (x % (int)std::pow(size, 2)) / size; //start of small quad in big quad
     int yshift = (y % (int)std::pow(size, 2)) / size;*/
@@ -65,7 +74,6 @@ cv::Mat SpatialSparsenessConstraint::getMeanMat(cv::Mat mag, int x, int y) {
     cv::Mat matHist; //histogram for small quad
     cv::Mat matOfMeans(1, size * size, CV_32FC1); //histogram for quad of quads
 
-    fflush(stdout);
     for(auto i = 0; i < size; i++){
         for(auto j = 0; j < size; j++){
 

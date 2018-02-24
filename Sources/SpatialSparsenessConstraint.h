@@ -8,7 +8,13 @@
 
 #include <opencv2/core/mat.hpp>
 #include <opencv2/imgproc.hpp>
+#include <map>
 
+/*struct cmpPoints {
+    bool operator()(const cv::Point& a, const cv::Point& b) const {
+        return ((a.x == b.x) && (a.y == b.y));
+    }
+};*/
 
 class SpatialSparsenessConstraint {
 public:
@@ -24,6 +30,7 @@ private:
     float getFirstNorm(cv::Mat mat);
     float getSecondNorm(cv::Mat mat);
     float getSparsness(cv::Mat hist);
+    std::map<cv::Point, cv::Mat> meanMats;
 
 };
 
