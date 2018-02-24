@@ -56,7 +56,13 @@ int main() {
 
     SpatialSparsenessConstraint ssc;
     ssc.suppressImage(Dgr);
+    ssc.suppressImage(Drg);
+    ssc.suppressImage(Dby);
+    ssc.suppressImage(Dyb);
 
+
+    //normalize(Dgr, Dgr, 255, 0);
+    //imshow( "Display final", Dgr);                   // Show our image inside it.
     Mat finalResponse = perElementMax({Drg, Dgr, Dby, Dyb});
 
     normalize(finalResponse, finalResponse, 255, 0);

@@ -8,23 +8,35 @@
 
 SpatialSparsenessConstraint::SpatialSparsenessConstraint() {}
 
-void SpatialSparsenessConstraint::suppressImage(cv::Mat src) {
+void SpatialSparsenessConstraint::suppressImage(cv::Mat& src) {
 
-    cv::normalize(src, src, 1, 0);
+    cv::normalize(src, src, 10, 0);
     cv::Mat mag = getGradientMagnitude(src);
-
-    //cv::imshow( "Display src", src);                   // Show our image inside it.
-    //cv::normalize(mag, mag, 255, 0);
-    //cv::imshow( "Display mag", mag);                   // Show our image inside it.
-    //cv::waitKey(0);
-    //std::cout<< mag<< std::endl;
+    float mu;
 
 
-    //cv::calcHist(&mag, 1, 0, cv::Mat(), matHist, 1, &nHistSize, &fHistRange);
-    //cv::imshow( "Display hist", matHist);                   // Show our image inside it.
-    //cv::waitKey(0);
+    for(int y = 0; y < src.rows; y++){
+        for(int x = 0; x < src.cols; x++){
+
+            cv::Mat meanMat;
+
+            meanMat = getMeanMat(mag, x, y);
+            //std::cout <<"mean mat" << std::endl << meanMat<<std::endl;
+
+            mu = getSparsness(meanMat);
+            //std::cout <<"sparsennes" << std::endl << mu<<std::endl;
+            mu *= src.at<float>(y, x)/getMeanValue(meanMat, 0.0f, 1.5f) < 1 ? src.at<float>(y, x)/getMeanValue(meanMat, 0.0f, 1.5f) : 1;
+                    //std::min(1., src.at<float>(y, x)/getMeanValue(meanMat, 0.0f, 1.5f) );
+            //std::cout<<"mu"<<mu<<std::endl;
+            src.at<float>(y, x) *= mu;
+            //std::cout<<std::endl;
+
+        }
+    }
 
 }
+
+
 
 cv::Mat SpatialSparsenessConstraint::getGradientMagnitude(cv::Mat src) {
 
@@ -34,7 +46,7 @@ cv::Mat SpatialSparsenessConstraint::getGradientMagnitude(cv::Mat src) {
     cv::Sobel(src, Sy, CV_32FC1, 0, 1, 3);
     cv::Mat mag;
     cv::magnitude(Sx, Sy, mag);
-    getMeanMat(mag, 100,100);
+    //getMeanMat(mag, 100,100);
     return mag;
 
 }
@@ -53,20 +65,24 @@ cv::Mat SpatialSparsenessConstraint::getMeanMat(cv::Mat mag, int x, int y) {
     cv::Mat matHist; //histogram for small quad
     cv::Mat matOfMeans(1, size * size, CV_32FC1); //histogram for quad of quads
 
+    fflush(stdout);
     for(auto i = 0; i < size; i++){
         for(auto j = 0; j < size; j++){
 
             int xshift = xstart + j * size;
             int yshift = ystart + i * size;
 
-            cv::Rect rect(xstart, ystart, size, size); //small quad
+            cv::Rect rect(xstart + xshift, ystart + yshift, size, size); //small quad
             cv::Mat roi = mag(rect);
             cv::calcHist(&roi, 1, 0, cv::Mat(), matHist, 1, &nHistSize, &fHistRange);
-            matOfMeans.at<double>(size * i + j) = getMeanValue(matHist, fRange[0], fRange[1]);
+            matOfMeans.at<float>(0, size * i + j) = getMeanValue(matHist, fRange[0], fRange[1]);
+            //std::cout<< matOfMeans.at<double>(0, size * i + j)<< std::endl << size * i + j<< std::endl;
 
         }
     }
-    
+
+    //std::cout<<matOfMeans<<std::endl;
+    //fflush(stdout);
     //std::cout<<matHist<<std::endl;
     //std::cout<<getMeanValue(matHist, fRange[0], fRange[1]);
 
@@ -82,6 +98,43 @@ float SpatialSparsenessConstraint::getMeanValue(cv::Mat hist, float lowBoundary,
     cv::Point maxLoc;
     cv::minMaxLoc(hist, 0, 0, 0, &maxLoc);
     return (maxLoc.y + 1) * shift;
+
+}
+
+float SpatialSparsenessConstraint::getFirstNorm(cv::Mat mat) {
+
+    float norm = 0;
+    for(auto i = 0; i < mat.rows; i++){
+        for(auto j = 0; j < mat.cols; j++){
+            norm += mat.at<float>(i,j);
+        }
+    }
+    return norm;
+
+}
+
+float SpatialSparsenessConstraint::getSecondNorm(cv::Mat mat) {
+
+    float norm = 0;
+    for(auto i = 0; i < mat.rows; i++){
+        for(auto j = 0; j < mat.cols; j++){
+            norm += std::pow(mat.at<float>(i,j), 2);
+        }
+    }
+    return std::sqrt(norm);
+
+}
+
+float SpatialSparsenessConstraint::getSparsness(cv::Mat hist) {
+
+    int n = hist.rows * hist.cols;
+    float denominator = 1./(std::sqrt(n) - 1);
+    float norm1 = getFirstNorm(hist);
+    float norm2 = getSecondNorm(hist);
+    //std::cout<<" norm1: "<<norm1/norm2<<" norm2: "<<norm2<<std::endl;
+
+    return (std::sqrt(n) - norm1/norm2) * denominator;
+
 
 }
 
