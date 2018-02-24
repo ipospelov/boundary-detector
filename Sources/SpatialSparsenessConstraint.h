@@ -17,9 +17,10 @@ public:
 
 private:
     int const size = 3;
-    cv::Mat getMean(cv::Mat mag, int x, int y);
+    cv::Mat getMeanMat(cv::Mat mag, int x, int y);
     cv::Mat getMeanImage(cv::Mat src, int size);
     cv::Mat getGradientMagnitude(cv::Mat src);
+    float getMeanValue(cv::Mat src, float lowBoundary, float highBoundary);
 };
 
 
