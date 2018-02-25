@@ -24,13 +24,13 @@ public:
 private:
     int const size = 3;
     cv::Mat getMeanMat(cv::Mat mag, int x, int y);
-    cv::Mat getMeanImage(cv::Mat src, int size);
+    void setMeanMats(cv::Mat mag);
     cv::Mat getGradientMagnitude(cv::Mat src);
     float getMeanValue(cv::Mat src, float lowBoundary, float highBoundary);
     float getFirstNorm(cv::Mat mat);
     float getSecondNorm(cv::Mat mat);
-    float getSparsness(cv::Mat hist);
-    std::map<cv::Point, cv::Mat> meanMats;
+    float getSparseness(cv::Mat hist);
+    std::vector<std::vector< cv::Mat >> meanMats;
 
 };
 
