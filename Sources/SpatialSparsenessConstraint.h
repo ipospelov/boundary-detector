@@ -18,11 +18,12 @@
 
 class SpatialSparsenessConstraint {
 public:
-    SpatialSparsenessConstraint();
+    SpatialSparsenessConstraint(int size);
     void suppressImage(cv::Mat& src);
 
 private:
-    int const size = 3;
+    //int const size = 5;
+    int size;
     cv::Mat getMeanMat(cv::Mat mag, int x, int y);
     void setMeanMats(cv::Mat mag);
     cv::Mat getGradientMagnitude(cv::Mat src);

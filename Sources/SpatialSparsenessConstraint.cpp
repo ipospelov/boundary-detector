@@ -6,7 +6,7 @@
 #include <iostream>
 #include "SpatialSparsenessConstraint.h"
 
-SpatialSparsenessConstraint::SpatialSparsenessConstraint() {}
+SpatialSparsenessConstraint::SpatialSparsenessConstraint(int size):size(size) {}
 
 void SpatialSparsenessConstraint::suppressImage(cv::Mat& src) {
 

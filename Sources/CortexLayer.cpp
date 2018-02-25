@@ -8,6 +8,7 @@ CortexLayer::CortexLayer(double gamma, unsigned long n, double sigma, const Size
     for(auto i = 1; i <= n; i++){
         theta = (i - 1)*360/n;
         filters.push_back(getFilterKernel(theta));
+        //filters.push_back(cv::getGaborKernel(cv::Size(7,7), sigma, theta, 15, 0));
         //derivativeGaussianKernel(theta, i - 1);
     }
 }

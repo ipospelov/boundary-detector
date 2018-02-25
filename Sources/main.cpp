@@ -5,11 +5,21 @@
 #include "GanglionLayer.h"
 #include "SpatialSparsenessConstraint.h"
 
+//gaus:
 #define SIGMA 0.3
 #define W1 1
 #define W2 (-0.6)
 #define N0 16
 #define GAMMA 0.5
+#define SSC_SIZE 3
+
+//gabor:
+/*#define SIGMA 0.8
+#define W1 1
+#define W2 (-0.3)
+#define N0 16
+#define GAMMA 0.5
+#define SSC_SIZE 9*/
 
 using namespace cv;
 using namespace std;
@@ -21,6 +31,12 @@ Mat perElementMax(std::initializer_list<Mat> list){
         cv::max(max, elem, max);
     }
     return max;
+}
+
+void printMat(cv::Mat mat){
+    normalize(mat, mat, 255, 0);
+    imshow( "Display mat", mat);                   // Show our image inside it.
+    waitKey(0);
 }
 
 int main() {
@@ -54,7 +70,7 @@ int main() {
     Mat Dby = cortexLayer.getDby(Sby);
     Mat Dyb = cortexLayer.getDyb(Syb);
 
-    SpatialSparsenessConstraint ssc;
+    SpatialSparsenessConstraint ssc(SSC_SIZE);
     ssc.suppressImage(Dgr);
     ssc.suppressImage(Drg);
     ssc.suppressImage(Dby);
@@ -65,9 +81,10 @@ int main() {
     //imshow( "Display final", Dgr);                   // Show our image inside it.
     Mat finalResponse = perElementMax({Drg, Dgr, Dby, Dyb});
 
-    normalize(finalResponse, finalResponse, 255, 0);
+/*    normalize(finalResponse, finalResponse, 255, 0);
     imshow( "Display final", finalResponse);                   // Show our image inside it.
-    waitKey(0);
+    waitKey(0);*/
+    printMat(finalResponse);
 
     return 0;
 
